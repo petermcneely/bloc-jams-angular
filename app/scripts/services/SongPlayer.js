@@ -12,12 +12,6 @@
 		var SongPlayer = {};
 
 		/*
-		* @desc The album to be played.
-		* @type {Object}
-		*/
-		var currentAlbum = Fixtures.getAlbum();
-
-		/*
 		* @desc Buzz object audio file
 		* @type {Object}
 		*/
@@ -29,7 +23,7 @@
 		* @param {Object} song
 		*/
 		var getSongIndex = function(song) {
-			return currentAlbum.songs.indexOf(song);
+			return SongPlayer.currentAlbum.songs.indexOf(song);
 		}
 
 		/*
@@ -76,13 +70,19 @@
 		SongPlayer.currentSong = null;
 
 		/*
+		* @desc The album to be played.
+		* @type {Object}
+		*/
+		SongPlayer.currentAlbum = Fixtures.getAlbum();
+
+		/*
 		* @function play
 		* @desc If there is a different currently playing song, stops that song, sets the current song to the passed in song,
 		* and plays that song; otherwise, if the current song is paused, plays that song.
 		* @param {Object} song
 		*/
 		SongPlayer.play = function(song) {
-			song = song || SongPlayer.currentSong || currentAlbum.songs[0];
+			song = song || SongPlayer.currentSong || SongPlayer.currentAlbum.songs[0];
 			if (SongPlayer.currentSong !== song) {
 				setSong(song);
 				playSong(song);
@@ -116,11 +116,28 @@
 			if (currentSongIndex < 0) {
 				stopCurrentSong();
 			} else {
-				var song = currentAlbum.songs[currentSongIndex];
+				var song = SongPlayer.currentAlbum.songs[currentSongIndex];
 				setSong(song);
 				playSong(song);
 			}
 		};
+
+		/*
+		* @function next
+		* @desc Skips to the next song in the album.
+		*/
+		SongPlayer.next = function() {
+			var currentSongIndex = getSongIndex(SongPlayer.currentSong);
+			currentSongIndex++;
+
+			if (currentSongIndex >= SongPlayer.currentAlbum.songs.Length) {
+				stopCurrentSong();
+			} else {
+				var song = SongPlayer.currentAlbum.songs[currentSongIndex];
+				setSong(song);
+				playSong(song);
+			}
+		}
 
 		return SongPlayer;
 	}

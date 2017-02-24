@@ -18,6 +18,13 @@
 		var currentBuzzObject = null;
 
 		/*
+		* @desc So that we can set our initial volume, we flag that this is the beginning of the app sessions
+		* and no songs have been played yet.
+		* @type {Boolean}
+		*/
+		var noSongsYet = true;
+
+		/*
 		* @function getSongIndex
 		* @desc Gets the index of the passed in song within the current album.
 		* @param {Object} song
@@ -32,6 +39,7 @@
 		* @param {Object} song
 		*/
 		var setSong = function(song) {
+
 			stopCurrentSong();
 		
 			currentBuzzObject = new buzz.sound(song.audioUrl, {
@@ -46,6 +54,11 @@
 			});
 
 			SongPlayer.currentSong = song;
+
+			if (noSongsYet) {
+				SongPlayer.setVolume(SongPlayer.volume);
+				noSongsYet = false;
+			}
 		};
 
 		/*
@@ -88,7 +101,11 @@
 		*/
 		SongPlayer.currentAlbum = Fixtures.getAlbum();
 
-		SongPlayer.currentDuration = null;
+		/*
+		* @desc The current volume.
+		* @type {Number}
+		*/
+		SongPlayer.volume = 50;
 
 		/*
 		* @function play
@@ -164,6 +181,17 @@
 				currentBuzzObject.setTime(time);
 			}
 		};
+
+		/*
+		* @function setVolume
+		* @desc Sets volume (from 0 - 100) of currently playing song.
+		* @param {Number} volume
+		*/
+		SongPlayer.setVolume = function(volume) {
+			if (currentBuzzObject) {
+				currentBuzzObject.setVolume(volume);
+			}
+		}
 
 
 		return SongPlayer;

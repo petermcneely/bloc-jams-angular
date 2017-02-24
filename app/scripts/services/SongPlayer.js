@@ -4,7 +4,7 @@
 	* @desc Service providing song player functionality.
 	* @returns {Object}
 	*/
-	function SongPlayer(Fixtures) {
+	function SongPlayer($rootScope, Fixtures) {
 		/*
 		* @desc Object representing the song player service. Used to expose public attributes and functions.
 		* @type {Object}
@@ -38,6 +38,13 @@
 				formats: ['mp3'],
 				preload: true
 			});
+
+			currentBuzzObject.bind('timeupdate', function() {
+				$rootScope.$apply(function() {
+					SongPlayer.currentTime = currentBuzzObject.getTime();
+				});
+			});
+
 			SongPlayer.currentSong = song;
 		};
 
@@ -70,10 +77,18 @@
 		SongPlayer.currentSong = null;
 
 		/*
+		* @desc Current playback time (in seconds) of currently playing song.
+		* @type {Number}
+		*/
+		SongPlayer.currentTime = null;
+
+		/*
 		* @desc The album to be played.
 		* @type {Object}
 		*/
 		SongPlayer.currentAlbum = Fixtures.getAlbum();
+
+		SongPlayer.currentDuration = null;
 
 		/*
 		* @function play
@@ -139,10 +154,22 @@
 			}
 		}
 
+		/*
+		* @function setCurrentTime
+		* @desc Set current time (in seconds) of currently playing song
+		* @param {Number} time
+		*/
+		SongPlayer.setCurrentTime = function(time) {
+			if (currentBuzzObject) {
+				currentBuzzObject.setTime(time);
+			}
+		};
+
+
 		return SongPlayer;
 	}
 
 	angular
 		.module('blocJams')
-		.factory('SongPlayer', ['Fixtures', SongPlayer]);
+		.factory('SongPlayer', ['$rootScope', 'Fixtures', SongPlayer]);
 })();
